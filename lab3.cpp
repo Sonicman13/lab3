@@ -35,6 +35,8 @@ public:
     void add();
     void priceChange(char item1[], double price);
     void amountChange(char item1[], int amountDifference);
+    void displayName();
+    int storecmp(char name1[]);
 };
 
 
@@ -134,13 +136,20 @@ void Store::amountChange(char item1[], int amountDifference) {
     }
 }
 
+void Store::displayName() {
+    printf("Магазин: %s\n", name);
+}
+
+int Store::storecmp(char name1[]) {
+    return strcmp(name1, name);
+}
 int main()
 {
     setlocale(LC_ALL, "RUS");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    class Store store1, * store2;
-    int amountDifference, numberOfItems, itemAmount[N];
+    class Store store1[10], * store2[10];
+    int amountDifference, numberOfItems, itemAmount[N], i, max, n;
     double price, itemPrice[N];
     char f, s[N], s1[N][N], code[N], name[N], adress[N], itemCode[N][N], itemName[N][N];
     printf("Работать с переменной или с указателем?(1 - переменная, все остальные символы - указатель)\n");
@@ -152,7 +161,7 @@ int main()
         printf("Использовать или read чтобы ввести данные(1 - init, все остальные символы - read)\n");
         f = _getche();
         if (f == '0') {
-            store1.read();
+            store1[0].read();
         }
         else {
             printf("\nВведите название магазина\n");
@@ -180,21 +189,28 @@ int main()
                 f = _getche();
                 getchar();
             }
-            store1.init(name, adress, numberOfItems, itemName, itemCode, itemPrice, itemAmount);
+            store1[0].init(name, adress, numberOfItems, itemName, itemCode, itemPrice, itemAmount);
         }
-        while (f != '5') {
+        i = 0;
+        max = 1;
+        f = '1';
+        while (f != '8') {
+            store1[i].displayName();
             printf("\nВведите номер следующего действия:\n");
             printf("1 - показать информацию о магазине\n");
             printf("2 - добавить новый вид товара\n");
             printf("3 - изменить цену товара\n");
             printf("4 - изменить колличество товара\n");
-            printf("5 - выйти\n");
+            printf("5 - Добавить магазин\n");
+            printf("6 - показать все магазины\n");
+            printf("7 - сменить магазин\n");
+            printf("8 - выйти\n");
             f = _getche();
             if (f == '1') {
-                store1.display();
+                store1[i].display();
             }
             else if (f == '2') {
-                store1.add();
+                store1[i].add();
             }
             else if (f == '3') {
                 printf("\nВведите код товара\n");
@@ -204,7 +220,7 @@ int main()
                     scanf_s("%lf", &price);
                 } while (price < 0);
                 getchar();
-                store1.priceChange(code, price);
+                store1[i].priceChange(code, price);
             }
             else if (f == '4') {
                 printf("\nВведите код товара\n");
@@ -212,18 +228,39 @@ int main()
                 printf("Введите на сколько изменилось колличество товара(если увеличилость - положительное число, если уменьшилось - отрицательное)\n");
                 scanf_s("%d", &amountDifference);
                 getchar();
-                store1.amountChange(code, amountDifference);
+                store1[i].amountChange(code, amountDifference);
+            }
+            else if (f == '5') {
+                store1[max].read();
+                i = max;
+                max++;
+                
+            }
+            else if (f == '6') {
+                for (n = 0; n < max; n++) {
+                    store1[n].displayName();
+                }
+            }
+            else if (f == '7') {
+                printf("Введите название магазина\n");
+                gets_s(name);
+                for (n = 0; n < max; n++) {
+                    if (store1[n].storecmp(name) == 0) {
+                        i = n;
+                        n = max;
+                    }
+                }
             }
         }
     }
     else {
-        store2 = (class Store*)malloc(sizeof(Store));
+        store2[0] = (class Store*)calloc(10, sizeof(Store));
         strcpy_s(s, "-");
         strcpy_s(s1[0], "-");
         printf("Использовать или read чтобы ввести данные(1 - init, все остальные символы - read)\n");
         f = _getche();
         if (f == '0') {
-            store2->read();
+            store2[0]->read();
         }
         else {
             printf("\nВведите название магазина\n");
@@ -251,21 +288,27 @@ int main()
                 f = _getche();
                 getchar();
             }
-            store2->init(name, adress, numberOfItems, itemName, itemCode, itemPrice, itemAmount);
+            store2[0]->init(name, adress, numberOfItems, itemName, itemCode, itemPrice, itemAmount);
         }
-        while (f != '5') {
+        i = 0;
+        max = 1;
+        f = '1';
+        while (f != '8') {
             printf("\nВведите номер следующего действия:\n");
             printf("1 - показать информацию о магазине\n");
             printf("2 - добавить новый вид товара\n");
             printf("3 - изменить цену товара\n");
             printf("4 - изменить колличество товара\n");
-            printf("5 - выйти\n");
+            printf("5 - Добавить магазин\n");
+            printf("6 - показать все магазины\n");
+            printf("7 - сменить магазин\n");
+            printf("8 - выйти\n");
             f = _getche();
             if (f == '1') {
-                store2->display();
+                store2[i]->display();
             }
             else if (f == '2') {
-                store2->add();
+                store2[i]->add();
             }
             else if (f == '3') {
                 printf("\nВведите код товара\n");
@@ -275,7 +318,7 @@ int main()
                     scanf_s("%lf", &price);
                 } while (price < 0);
                 getchar();
-                store2->priceChange(code, price);
+                store2[i]->priceChange(code, price);
             }
             else if (f == '4') {
                 printf("\nВведите код товара\n");
@@ -283,7 +326,28 @@ int main()
                 printf("Введите на сколько изменилось колличество товара(если увеличилость - положительное число, если уменьшилось - отрицательное)\n");
                 scanf_s("%d", &amountDifference);
                 getchar();
-                store2->amountChange(code, amountDifference);
+                store2[i]->amountChange(code, amountDifference);
+            }
+            else if (f == '5') {
+                store2[max]->read();
+                i = max;
+                max++;
+
+            }
+            else if (f == '6') {
+                for (n = 0; n < max; n++) {
+                    store2[n]->displayName();
+                }
+            }
+            else if (f == '7') {
+                printf("Введите название магазина\n");
+                gets_s(name);
+                for (n = 0; n < max; n++) {
+                    if (store2[n]->storecmp(name) == 0) {
+                        i = n;
+                        n = max;
+                    }
+                }
             }
         }
         free(store2);
