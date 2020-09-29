@@ -1,0 +1,2 @@
+D:\lab33\Debug\lab3.exe
+D:\lab33\Debug\lab3.pdb
