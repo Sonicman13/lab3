@@ -15,12 +15,65 @@
 #define N 100
 
 class Item {
-public:
+private:
     char code[N];
     char name[N];
     double price;
     int amount;
+public:
+    void read();
+    void init(char code1[], char name1[], double price1, int amount1);
+    void display();
+    void setPrice(double price1);
+    void setAmount(int amount1);
+    char* getCode();
+    int getAmount();
 };
+
+void Item::read() {
+    printf("\nВведите название товара\n");
+    gets_s(name);
+    printf("Введите код товара\n");
+    gets_s(code);
+    do {
+        printf("Введите цену\n");
+        scanf_s("%lf", &price);
+    } while (price < 0);
+    do {
+        printf("Введите колличество товара\n");
+        scanf_s("%d", &amount);
+    } while (amount < 0);
+}
+
+void Item::init(char code1[], char name1[], double price1, int amount1) {
+    strcpy_s(name, name1);
+    strcpy_s(code, code1);
+    price = price1;
+    amount = amount1;
+}
+
+void Item::display() {
+    printf("Код товара: %s\n", code);
+    printf("Название товара: %s\n", name);
+    printf("Цена: %lf\n", price);
+    printf("Колличество: %d\n", amount);
+}
+
+void Item::setPrice(double price1) {
+    price=price1;
+}
+
+void Item::setAmount(int amount1) {
+    amount=amount1;
+}
+
+char* Item::getCode() {
+    return code;
+}
+
+int Item::getAmount() {
+    return amount;
+}
 
 class Store {
 private:
@@ -51,18 +104,7 @@ void Store::read() {
     printf("Добавить товар?(1 - да, все остальные символы - нет)\n");
     f = _getche();
     while (f == '1') {
-        printf("\nВведите название товара\n");
-        gets_s(item[numberOfItems].name);
-        printf("Введите код товара\n");
-        gets_s(item[numberOfItems].code);
-        do {
-            printf("Введите цену\n");
-            scanf_s("%lf", &item[numberOfItems].price);
-        } while (item[numberOfItems].price < 0);
-        do {
-            printf("Введите колличество товара\n");
-            scanf_s("%d", &item[numberOfItems].amount);
-        } while (item[numberOfItems].amount < 0);
+        item[numberOfItems].read();
         numberOfItems++;
         printf("Добавить еще один товар?(1 - да, все остальные символы -нет)\n");
         f = _getche();
@@ -76,10 +118,7 @@ void Store::init(char name1[], char adress1[], int numberOfItems1, char itemName
     strcpy_s(adress, adress1);
     numberOfItems = numberOfItems1;
     for (i = 0; i < numberOfItems; i++) {
-        strcpy_s(item[i].name, itemName1[i]);
-        strcpy_s(item[i].code, itemCode1[i]);
-        item[i].price = itemPrice1[i];
-        item[i].amount = itemAmount1[i];
+        item[i].init(itemCode1[i], itemName1[i], itemPrice1[i], itemAmount1[i]);
     }
 }
 
@@ -90,26 +129,12 @@ void Store::display() {
     printf("Колличество уникальных товаров: %d\n", numberOfItems);
     for (i = 0; i < numberOfItems; i++) {
         printf("\nТовар %d\n", i + 1);
-        printf("Код товара: %s\n", item[i].code);
-        printf("Название товара: %s\n", item[i].name);
-        printf("Цена: %lf\n", item[i].price);
-        printf("Колличество: %d\n", item[i].amount);
+        item[i].display();
     }
 }
 
 void Store::add() {
-    printf("\nВведите название нового товара\n");
-    gets_s(item[numberOfItems].name);
-    printf("Введите код нового товара\n");
-    gets_s(item[numberOfItems].code);
-    do {
-        printf("Введите цену нового товара\n");
-        scanf_s("%lf", &item[numberOfItems].price);
-    } while (item[numberOfItems].price < 0);
-    do {
-        printf("Введите колличество нового товара\n");
-        scanf_s("%d", &item[numberOfItems].amount);
-    } while (item[numberOfItems].amount < 0);
+    item[numberOfItems].read();
     numberOfItems++;
     getchar();
 }
@@ -117,8 +142,8 @@ void Store::add() {
 void Store::priceChange(char item1[], double price) {
     int i = 0;
     while (i < numberOfItems) {
-        if (strcmp(item[i].code, item1) == 0) {
-            item[i].price = price;
+        if (strcmp(item[i].getCode(), item1) == 0) {
+            item[i].setPrice(price);
             i = numberOfItems;
         }
         i++;
@@ -128,8 +153,8 @@ void Store::priceChange(char item1[], double price) {
 void Store::amountChange(char item1[], int amountDifference) {
     int i = 0;
     while (i < numberOfItems) {
-        if (strcmp(item[i].code, item1) == 0) {
-            item[i].amount = item[i].amount + amountDifference;
+        if (strcmp(item[i].getCode(), item1) == 0) {
+            item[i].setAmount(item[i].getAmount() + amountDifference);
             i = numberOfItems;
         }
         i++;
